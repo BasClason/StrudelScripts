@@ -10,15 +10,18 @@ const pad              = "< 7 _ _ _ _ _ _ 8 9 _ _ _ _ _ _ 8 > * 2"
 
 // FILTERS
 const arpcutoff        = slider(10000,400,10000)
-const basscutoff       = slider(281.755,150,1000)
+const basscutoff       = slider(750.95,150,1000)
 const kickhpf          = slider(30,30,1000)
-const drumstackhpf     = slider(299,0,1000)
+const tophpf           = slider(500,500,16000)
 const scl1             = "f:minor"
 
 // MIXER
 const arpmix           = slider(0.937,0,1)
 const subbassmix       = slider(0.674,0,1)
 const bassmix          = slider(0.65,0,1)
+const kickmix          = slider(1.104,0,1.20)
+const topmix           = slider(1,0,1)
+
 
 // PAD
 $: n(pad).scale(scl1)
@@ -44,7 +47,7 @@ $: n(arp.add(chordprogression)).scale(scl1).trans(-12)
 $: n(bass.add(chordprogression)).scale(scl1).trans(-24).s("supersaw")
   .cutoff(basscutoff)
   .detune(0.75)
-  .distort("3:0.2:diode")
+  .distort("2:0.4:diode")
   .hpf(110)
   .gain(sidechain)
   .postgain(bassmix)
@@ -64,9 +67,14 @@ $: n(subbass.add(chordprogression)).scale(scl1).trans(-36).s("sine")
 
 // DRUMS
 $: s("bd:1!4").hpf(kickhpf)
-  .postgain(1.5)
+  .gain(kickmix)
+  .postgain(1)
 
-$: s("hihat:<1 1 1 1>*16").gain("<0.35 0.5 1 0.35>*16")
+$: s("hihat:<1 1 1 1>*16").gain("<0.7 1 2 0.7>*16")
   .delay(".25")
-  .postgain("2")
-$: s("clap:<~ 5>*4").gain("0.35")
+  .postgain(topmix)
+  .hpf(tophpf)
+$: s("clap:<~ 5>*4")
+  .gain(topmix)
+  .hpf(tophpf)
+  .postgain("0.45")
