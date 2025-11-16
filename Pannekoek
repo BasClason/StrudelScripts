@@ -1,0 +1,62 @@
+setcpm(140/4)
+
+// PROGRESSIONS
+const chordprogression = "< 7 _ 9 6 5 _ _ 3 7 _ 9 10 5 _ _ 6 > * 2"
+const subbass          = "< ~ ~ 0 0 > * 16"
+const bass             = "< 0 0 7 0 > * 16"
+const arp              = "< 0 4 0 6 9 > * 16"
+const sidechain        = "< 0.5 0.75 1 1 > * 16"
+
+// FILTERS
+const cutoff           = slider(10000,400,10000)
+const basscutoff       = slider(281.755,150,1000)
+const kickhpf          = slider(30,30,1000)
+const drumstackhpf     = slider(1000,0,1000)
+const scl1             = "g:minor"
+
+// MIXER
+const arpmix           = slider(0.788,0,1)
+const subbassmix       = slider(0.674,0,1)
+const bassmix          = slider(0.65,0,1)
+
+
+// ARP
+$: n(arp.add(chordprogression)).scale(scl1).trans(-12)
+  .s("saw").cutoff(cutoff).detune(0.6)
+  .room("0.5")
+  .delay(0.3)
+  .compressor("-50:20:10:.001:.05")
+  .distort("2:0.5:diode")
+  .postgain(arpmix)
+
+
+// BASS
+$: n(bass.add(chordprogression)).scale(scl1).trans(-24).s("supersaw")
+  .cutoff(basscutoff)
+  .detune(0.75)
+  .distort("3:0.2:diode")
+  .hpf(110)
+  .gain(sidechain)
+  .postgain(bassmix)
+  .room(0.3)
+
+$: n(bass.add(chordprogression)).scale(scl1).trans(-12).s("saw")
+  .cutoff(basscutoff)
+  .gain(bassmix)
+
+$: n(subbass.add(chordprogression)).scale(scl1).trans(-24).s("sine")
+  .gain(subbassmix)
+  .distort("3:0.5:diode").gain(subbassmix).postgain(0.4)
+
+
+$: n(subbass.add(chordprogression)).scale(scl1).trans(-36).s("sine")
+  .distort("3:0.5:diode").gain(subbassmix).postgain(0.5)
+
+// DRUMS
+$: s("bd:1!4").hpf(kickhpf)
+  .postgain(1.5)
+
+$: s("hihat:<1 1 1 1>*16").gain("<0.35 0.5 1 0.35>*16")
+  .delay(".25")
+  .postgain("2")
+$: s("clap:<~ 5>*4").gain("0.35")
