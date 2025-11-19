@@ -1,6 +1,6 @@
 setcpm(140/4)
 
-// PROGRESSIONS
+// // PROGRESSIONS
 const chordprogression = "< 7 _ 9 6 5 _ _ 3 7 _ 9 10 5 _ _ 6 > * 2"
 const subbass          = "< ~ ~ 0 0 > * 16"
 const bass             = "< 0 0 7 0 > * 16"
@@ -8,15 +8,15 @@ const arp              = "< 0 4 0 6 9 > * 16"
 const sidechain        = "< 0.5 0.75 1 1 > * 16"
 const pad              = "< 7 _ _ _ _ _ _ 8 9 _ _ _ _ _ _ 8 > * 2"
 
-// FILTERS
+// // FILTERS
 const arpcutoff        = slider(10000,400,10000)
-const basscutoff       = slider(750.95,150,1000)
+const basscutoff       = slider(317.45,150,1000)
 const kickhpf          = slider(30,30,1000)
 const tophpf           = slider(500,500,16000)
 const scl1             = "f:minor"
 
 // MIXER
-const arpmix           = slider(0.937,0,1)
+const arpmix           = slider(1,0,1)
 const subbassmix       = slider(0.674,0,1)
 const bassmix          = slider(0.65,0,1)
 const kickmix          = slider(1.104,0,1.20)
@@ -37,21 +37,20 @@ $: n(pad).scale(scl1)
 
 // ARP
 $: n(arp.add(chordprogression)).scale(scl1).trans(-12)
-  .s("saw").cutoff(arpcutoff)
-  .distort("1:0.5:diode")
-  .postgain(arpmix)
-  .room("0.5")
-  .delay("0.33:0.25:0.3")
-  ._pianoroll()
+  .s("saw").cutoff(arpcutoff).detune(0.6)
+  .room(0.75)
+  .delay(0.45)
+  .compressor("-50:20:10:.001:.05")
+  .decay(.09)
+  .lpdecay(.02)
+
 // BASS
-$: n(bass.add(chordprogression)).scale(scl1).trans(-24).s("supersaw")
+$: n(bass.add(chordprogression)).scale(scl1).trans(-36).s("supersaw")
   .cutoff(basscutoff)
-  .detune(0.75)
-  .distort("2:0.4:diode")
-  .hpf(110)
-  .gain(sidechain)
-  .postgain(bassmix)
-  .room(0.3)
+  .gain(1.1)
+  .detune(0.5)
+  .hpf(130)
+  .distort("3:0.18:diode")
 
 $: n(bass.add(chordprogression)).scale(scl1).trans(-12).s("saw")
   .cutoff(basscutoff)
@@ -67,14 +66,17 @@ $: n(subbass.add(chordprogression)).scale(scl1).trans(-36).s("sine")
 
 // DRUMS
 $: s("bd:1!4").hpf(kickhpf)
-  .gain(kickmix)
-  .postgain(1)
+  .gain(kickmix)ain(1)
 
 $: s("hihat:<1 1 1 1>*16").gain("<0.7 1 2 0.7>*16")
   .delay(".25")
   .postgain(topmix)
   .hpf(tophpf)
-$: s("clap:<~ 5>*4")
-  .gain(topmix)
-  .hpf(tophpf)
-  .postgain("0.45")
+
+$: s("hihat:<~ ~ 54 54>*16").gain("<0.7 1 .35 0.35>*16")
+  .postgain(topmix)
+
+// $: s("clap:<~ 5>*4")
+//   .gain(topmix)
+//   .hpf(tophpf)
+//   .postgain("0.45")
