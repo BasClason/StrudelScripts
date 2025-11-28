@@ -8,13 +8,13 @@ const arp              = "< 5 4 6 9 0 > * 16"
 // CUTOFF AND OTHER VARS
 const lpfArp           = slider(373.1,350,2000)
 const arpdecay         = slider(0.0822999999999999,0.075,0.175)
-const lpfMidBass       = slider(1000,500,2500)
+const lpfMidBass       = slider(1320,500,2500)
 
 //MIXER
 const kickvol          = slider(1,0,1)
 const snarevol         = slider(1,0,1)
-const hatvol           = slider(0.699,0,1)
-const arpVol           = slider(1,0,1)
+const hatvol           = slider(0.568,0,1)
+const arpVol           = slider(0.958,0,1)
 const midBassVol       = slider(0.822,0,1)
 
 // DRUMS
@@ -37,6 +37,18 @@ $: sound("<~ ~ oh:2 ~> * 16")
   .gain(0.5)
   .postgain(hatvol)
 
+$: sound("< ~ sd:7 >*4")
+  .pan(0.575)
+  .gain(0.3)
+  .room(0.4)
+  .postgain(snarevol)
+
+$: sound("< ~ sd:8 >*4")
+  .pan(0.425)
+  .gain(0.05)
+  .delay("0.5")
+  .postgain(snarevol)
+
 // BASS
 $: n("< 0 0 0 0 > * 16".add(chordprog)).scale(scl1).trans(-24)
   .gain("<0 .7 2 1.5> * 16")
@@ -44,6 +56,7 @@ $: n("< 0 0 0 0 > * 16".add(chordprog)).scale(scl1).trans(-24)
   .s("supersaw")
   .distort("1.5:0.6:diode")
   .orbit(2)
+  .hpf(120)
   .lpf(lpfMidBass)
   .postgain(midBassVol)
 
