@@ -1,0 +1,67 @@
+setcpm(138/4)
+
+// MELODIES AND PROGRESSIONS
+const scl1            = "a:minor"
+const chordprog        = "<0 _ _ _ 4 _ _ _ 5 _ _ _ 3 _ _ _ 0 _ _ _ 4 _ _ _ 5 _ _ _ 6 _ 7 _ > * 2"
+const arp              = "< 5 4 6 9 0 > * 16"
+
+// CUTOFF AND OTHER VARS
+const lpfArp           = slider(373.1,350,2000)
+const arpdecay         = slider(0.0822999999999999,0.075,0.175)
+const lpfMidBass       = slider(1000,500,2500)
+
+//MIXER
+const kickvol          = slider(1,0,1)
+const snarevol         = slider(1,0,1)
+const hatvol           = slider(0.699,0,1)
+const arpVol           = slider(1,0,1)
+const midBassVol       = slider(0.822,0,1)
+
+// DRUMS
+$: sound("< bd:1 >*4")
+  .compressor("-7:5:1:1:130")
+  .postgain(kickvol)
+  .duckorbit(2).duckattack(0.2).duckdepth(0.85)
+
+$: sound("< ~ hh:1 hh:1 hh:1> * 16")
+  .gain("<0 0.7 1 1.5> * 16")
+  .room("0.3:0.9")
+  .postgain(hatvol)
+
+$: sound("< ~ ~ sh:2 sh:2> *16")
+  .gain("< 0 0 0.6 0.4>*16")
+  .pan(.25)
+  .postgain(hatvol)
+
+$: sound("<~ ~ oh:2 ~> * 16")
+  .gain(0.5)
+  .postgain(hatvol)
+
+// BASS
+$: n("< 0 0 0 0 > * 16".add(chordprog)).scale(scl1).trans(-24)
+  .gain("<0 .7 2 1.5> * 16")
+  .decay("< 0 0 0.2 0.2> * 16")
+  .s("supersaw")
+  .distort("1.5:0.6:diode")
+  .orbit(2)
+  .lpf(lpfMidBass)
+  .postgain(midBassVol)
+
+$: n("<0 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-24)
+  .s("sine") 
+  .orbit(2)
+
+$: n("<0 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-36)
+  .s("sine")
+  .orbit(2)
+
+$: n(arp.add(chordprog)).scale(scl1)
+  .s("square")
+  .decay(arpdecay)
+  .distort("2.4:0.3:diode")
+  .orbit(2)
+  .compressor("-7:5:1:2:10")
+  .delay(0.5)
+  .room(0.5)
+  .lpf(lpfArp)
+  .postgain(arpVol)
