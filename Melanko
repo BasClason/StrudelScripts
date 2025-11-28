@@ -8,14 +8,14 @@ const arp              = "< 5 4 6 9 0 > * 16"
 // CUTOFF AND OTHER VARS
 const lpfArp           = slider(373.1,350,2000)
 const arpdecay         = slider(0.0822999999999999,0.075,0.175)
-const lpfMidBass       = slider(1320,500,2500)
+const lpfMidBass       = slider(1302,500,2500)
 
 //MIXER
 const kickvol          = slider(1,0,1)
 const snarevol         = slider(1,0,1)
 const hatvol           = slider(0.568,0,1)
 const arpVol           = slider(0.958,0,1)
-const midBassVol       = slider(0.822,0,1)
+const midBassVol       = slider(0.736,0,1)
 
 // DRUMS
 $: sound("< bd:1 >*4")
@@ -51,22 +51,31 @@ $: sound("< ~ sd:8 >*4")
 
 // BASS
 $: n("< 0 0 0 0 > * 16".add(chordprog)).scale(scl1).trans(-24)
-  .gain("<0 .7 2 1.5> * 16")
+  .gain("<0 .7 1.5 1.0> * 16")
   .decay("< 0 0 0.2 0.2> * 16")
   .s("supersaw")
   .distort("1.5:0.6:diode")
   .orbit(2)
-  .hpf(120)
+  .hpf(150)
   .lpf(lpfMidBass)
   .postgain(midBassVol)
 
-$: n("<0 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-24)
+$: n("<~ 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-24)
   .s("sine") 
+  .gain("< 0 0.25 0.5 0.25> *16")
+  .decay(0.1)
+  .distort("3.5:0.3:diode")
+  .lpf(200)
   .orbit(2)
 
-$: n("<0 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-36)
+$: n("<~ 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-36)
   .s("sine")
+  .gain("< 0 0.25 0.5 0.25> *16")
+  .distort("3.5:0.2:diode")
+  .decay(0.1)
   .orbit(2)
+
+// ARPS AND MELODIES
 
 $: n(arp.add(chordprog)).scale(scl1)
   .s("square")
@@ -78,3 +87,10 @@ $: n(arp.add(chordprog)).scale(scl1)
   .room(0.5)
   .lpf(lpfArp)
   .postgain(arpVol)
+
+$: n("< ~ ~ ~ ~ ~ ~ ~ ~[3 8] ~ ~ ~ ~ ~ ~ ~ ~ [2 7] >*4").scale(scl1).s("gm_acoustic_guitar_nylon").trans(12)
+ .decay(0.6)
+ .release(0.8)
+ .delay(0.7)
+ .delayfeedback(0.96)
+ .delaytime(3/4)
