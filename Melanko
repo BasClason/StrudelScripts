@@ -1,29 +1,31 @@
-setcpm(138/4)
+setcpm(142/4)
 
 // MELODIES AND PROGRESSIONS
 const scl1             = "a:minor"
 const chordprog        = "< 0 _ _ _ 4 _ _ _ 5 _ _ _ 3 _ _ _ 0 _ _ _ 4 _ _ _ 5 _ _ _ 6 _ 7 _ > * 2"
 const arp              = "< 5 4 6 9 0 > * 16"
-const melody           = "< ~ ~ 0 ~ 2 ~ 0 ~ 4 ~ ~ ~ 5 ~ 6 ~ ~ ~ 5 ~ ~ ~ ~ 2 ~ ~ ~ ~ 4 _ 9 ~ > * 16"
+const melody           = "< ~ ~ 0 ~ 2 ~ 0 ~ 4 ~ 0 ~ 5 _ 6 ~ 0 ~ 5 ~ ~ 0 ~ 2 ~ ~ 0 ~ 4 _ 9 ~ > * 16"
 
 // CUTOFF AND OTHER VARS
 const lpfArp           = slider(1523.15,350,2000)
-const arpdecay         = slider(0.0968149999999998,0.08,0.175)
-const lpfMidBass       = slider(2046,500,2500)
+const arpdecay         = slider(0.1,0.08,0.175)
+const lpfMidBass       = slider(700,500,2500)
 const lpfMelody        = slider(4019,500,5000)
 
 //BUSS SLIDERS
+const bassBuss         = slider(1,0,1)
 const drumBuss         = slider(1,0,1)
 const drumHpf          = slider(0,0,3000)
 const kickHpf          = slider(30,30,3000).add(drumHpf)
+
 
 // TRACK SLIDERS
 const kickvol          = slider(1,0,1).mul(drumBuss)
 const snarevol         = slider(1,0,1).mul(drumBuss)
 const hatvol           = slider(0.479,0,0.5).mul(drumBuss)
 const arpVol           = slider(0.277,0,1)
-const midBassVol       = slider(0.736,0,1)
-const subBassVol       = slider(1,0,1)
+const midBassVol       = slider(0.664,0,1).mul(bassBuss)
+const subBassVol       = slider(0.83,0,1).mul(bassBuss)
 const melodyVol        = slider(0.7,0,1)
 
 // DRUMS
@@ -85,6 +87,7 @@ $: n("<~ 0 0 0> * 16".add(chordprog)).scale(scl1).trans(-36)
   .distort("3.5:0.2:diode")
   .decay(0.1)
   .orbit(2)
+  .postgain(subBassVol)
 
 // ARPS AND MELODIES
 
