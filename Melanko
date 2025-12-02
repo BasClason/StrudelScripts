@@ -3,7 +3,7 @@ setcpm(142/4)
 // MELODIES AND PROGRESSIONS
 const scl1             = "a:minor"
 const chordprog        = "< 0 _ _ _ 4 _ _ _ 5 _ _ _ 3 _ _ _ 0 _ _ _ 4 _ _ _ 5 _ _ _ 6 _ 7 _ > * 2"
-const arp              = "< 5 4 6 9 0 > * 16"
+const arp              = "< 5 4 6 9 0 4 7 > * 16"
 const melody           = "< ~ ~ 0 ~ 2 ~ 0 ~ 4 ~ 0 ~ 5 _ 6 ~ 0 ~ 5 ~ ~ 0 ~ 2 ~ ~ 0 ~ 4 _ 9 ~ > * 16"
 
 // CUTOFF AND OTHER VARS
@@ -13,20 +13,19 @@ const lpfMidBass       = slider(700,500,2500)
 const lpfMelody        = slider(4019,500,5000)
 
 //BUSS SLIDERS
-const bassBuss         = slider(1,0,1)
-const drumBuss         = slider(1,0,1)
+const bassBuss         = slider(0,0,1)
+const drumBuss         = slider(0,0,1)
 const drumHpf          = slider(0,0,3000)
 const kickHpf          = slider(30,30,3000).add(drumHpf)
-
 
 // TRACK SLIDERS
 const kickvol          = slider(1,0,1).mul(drumBuss)
 const snarevol         = slider(1,0,1).mul(drumBuss)
 const hatvol           = slider(0.479,0,0.5).mul(drumBuss)
-const arpVol           = slider(0.277,0,1)
+const arpVol           = slider(0,0,1)
+const melodyVol        = slider(0.923,0,1)
 const midBassVol       = slider(0.664,0,1).mul(bassBuss)
 const subBassVol       = slider(0.83,0,1).mul(bassBuss)
-const melodyVol        = slider(0.7,0,1)
 
 // DRUMS
 $: sound("< bd:1>*4")
@@ -112,6 +111,20 @@ $: n(melody.add(chordprog)).scale(scl1)
   .lpdecay(0.055)
   .delayspeed(1/6)
   .gain(1.4)
+  .postgain(melodyVol)
+  .room(0.5)
+  .roomsize(4)
+  .roomfade(5)
+
+$: n(melody.add(chordprog)).scale(scl1).trans(-12)
+  .s("supersaw")
+  .detune(0.9)
+  .decay(0.1)
+  .delay(0.9)
+  .lpf(lpfMelody)
+  .lpdecay(0.055)
+  .delayspeed(1/6)
+  .gain(1.3)
   .postgain(melodyVol)
   .room(0.5)
   .roomsize(4)
