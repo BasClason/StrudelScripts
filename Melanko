@@ -1,30 +1,33 @@
 setcpm(138/4)
 
 // MELODIES AND PROGRESSIONS
-const scl1            = "a:minor"
-const chordprog        = "<0 _ _ _ 4 _ _ _ 5 _ _ _ 3 _ _ _ 0 _ _ _ 4 _ _ _ 5 _ _ _ 6 _ 7 _ > * 2"
+const scl1             = "a:minor"
+const chordprog        = "< 0 _ _ _ 4 _ _ _ 5 _ _ _ 3 _ _ _ 0 _ _ _ 4 _ _ _ 5 _ _ _ 6 _ 7 _ > * 2"
 const arp              = "< 5 4 6 9 0 > * 16"
+const melody           = "< ~ ~ 0 ~ 2 ~ 0 ~ 4 ~ ~ ~ 5 ~ 6 ~ ~ ~ 5 ~ ~ ~ ~ 2 ~ ~ ~ ~ 4 _ 9 ~ > * 16"
 
 // CUTOFF AND OTHER VARS
-const lpfArp           = slider(782.3,350,2000)
-const arpdecay         = slider(0.08,0.08,0.175)
-const lpfMidBass       = slider(1092,500,2500)
-x
+const lpfArp           = slider(1523.15,350,2000)
+const arpdecay         = slider(0.0968149999999998,0.08,0.175)
+const lpfMidBass       = slider(2046,500,2500)
+const lpfMelody        = slider(4019,500,5000)
+
 //BUSS SLIDERS
 const drumBuss         = slider(1,0,1)
-const drumHpf          = slider(0000,0,3000)
+const drumHpf          = slider(0,0,3000)
 const kickHpf          = slider(30,30,3000).add(drumHpf)
 
 // TRACK SLIDERS
 const kickvol          = slider(1,0,1).mul(drumBuss)
 const snarevol         = slider(1,0,1).mul(drumBuss)
 const hatvol           = slider(0.479,0,0.5).mul(drumBuss)
-const arpVol           = slider(0.958,0,1)
+const arpVol           = slider(0.277,0,1)
 const midBassVol       = slider(0.736,0,1)
 const subBassVol       = slider(1,0,1)
+const melodyVol        = slider(0.7,0,1)
 
 // DRUMS
-$: sound("< bd:1 >*4")
+$: sound("< bd:1>*4")
   .compressor("-7:5:1:1:130")
   .postgain(kickvol)
   .hpf(kickHpf)
@@ -57,7 +60,7 @@ $: sound("< ~ sd:8 >*4")
   .postgain(snarevol)
 
 // BASS
-$: n("< 0 0 0 0 > * 16".add(chordprog)).scale(scl1).trans(-24)
+$: n("< ~ 0 0 0 > * 16".add(chordprog)).scale(scl1).trans(-24)
   .gain("<0 .7 1.5 1.0> * 16")
   .decay("< 0 0 0.2 0.2> * 16")
   .s("supersaw")
@@ -97,3 +100,16 @@ $: n(arp.add(chordprog)).scale(scl1)
   .lpf(lpfArp)
   .postgain(arpVol)
 
+$: n(melody.add(chordprog)).scale(scl1)
+  .s("supersaw")
+  .detune(0.6)
+  .decay(0.1)
+  .delay(0.9)
+  .lpf(lpfMelody)
+  .lpdecay(0.055)
+  .delayspeed(1/6)
+  .gain(1.4)
+  .postgain(melodyVol)
+  .room(0.5)
+  .roomsize(4)
+  .roomfade(5)
