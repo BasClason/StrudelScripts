@@ -1,5 +1,9 @@
 setcpm(140/4)
 
+//STOLE SWITCHANGELS' 303 filter
+register('tbthreefilter', (x, pat) => pat.lpf(100)
+ .lpenv(x * 9).lps(0.1).lpd(.1).lpq(2))
+
 // PROGRESSIONS & MELODIES
 const chordprogression = "< 7 _ 9 6 5 _ _ 3 7 _ 9 10 5 _ _ 6 > * 2"
 const subbass          = "< ~ ~ 0 0 > * 16"
