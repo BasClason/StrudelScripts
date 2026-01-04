@@ -5,7 +5,8 @@ const arp              = "< 0 9 2 4 6 > * 16"
 const mainscale        = "G:minor"
 
 // FILTERS
-const arplpf           = slider(1000,1000,10000)
+const arplpflo         = slider(1378,1000,10000)
+const arplpfhi         = slider(4285,1000,10000)
 const basslpf          = slider(380.85,150,3000)
 const lpfpad           = slider(700,700,4000)
 
@@ -13,7 +14,7 @@ const lpfpad           = slider(700,700,4000)
 const volsub24         = slider(0.8,0.7,0.9)
 const volsub           = slider(1.2,1.0,1.4)
 const volbass          = slider(0.9,0.9,1.1)
-const volarp           = slider(0.733,0,1)
+const volarp           = slider(1,0,1)
 const volpad           = slider(1,1,0)
 const bassmix          = slider(0,0,-1)
 
@@ -22,7 +23,7 @@ $: n(arp.add(progression)).scale("g:minor").trans(-12)
   .s("sawtooth").cutoff("4000")
   .delay(".25").delayfeedback(".5").delayspeed("0.16")
   .room("0.5")
-  .cutoff(perlin.range(arplpf,10000).slow(4))
+  .cutoff(perlin.range(arplpflo,arplpfhi).slow(4)).lpd(.1).lps(.01)
   .postgain(volarp)
 
 // BASS
@@ -59,4 +60,4 @@ $: s("clap:<~ 5>*4").gain("0.425").delay(.35).delayfeedback(.3).delayspeed(.33).
 // PADS
 $: n("<0, 2, 4, 9>*16".add(progression)).scale(mainscale).trans(-12)
   .s("supersaw").lpf(perlin.range(700,4000).slow(8))
-  .orbit(2).room(.7).postgain(0.6)
+  .orbit(2).room(.7).postgain(perlin.range(0.3, 0.5).slow(4))
