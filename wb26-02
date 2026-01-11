@@ -1,26 +1,32 @@
 setcpm(142/4)
 
+// Init project
 const setscale       = "D#:minor"
 const threeohthree   = "< 0 0 0 0 2 3 0 0 3 0 0 0 0 7 1 1 > * 16"
 const chordprog      = "< 0  _ 0 _ 4 _ 3 _ >" //this is 16 bars
 const hatpattern     = "[hh:3 hh:3 oh:1 hh:2]*4"
 const sidegain       = "[0.2 0.5 1 0.6]*4"
+const melody         = "< 2 2 2 2 >"
 
-const lp303melody    = slider(4.08,0,8)
-const threegain      = slider(1.1824,0.6,1.3)
-const hatgain        = slider(0.0894,0,0.2)
+// Mixer
+const lp303melody    = slider(287.6,200,800)
+const threegain      = slider(0.6413,0.6,1.3)
+const hatgain        = slider(0.0584,0,0.2)
 const kickgain       = slider(0.708,0.6,1.2)
-const midbassgain    = slider(0.2992,0,0.8)
+const midbassgain    = slider(0.2136,0,0.8)
 
 // Masks 
-const kickmask       = "[ 1 1 1 0 ]/16"
-const hatmask        = "[ 0 0 1 1 ]/16"
-const weirdthingmask = "[ 0 0 0 1 ]/16"
+const kickmask       = "[ 1 1 1 1 0 0 1 1 0 0 1 ]/44"
+const hatmask        = "[ 0 1 1 1 0 0 0 1 0 1 1 ]/44"
+const weirdthingmask = "[ 0 0 0 0 0 1 1 1 1 1 0 ]/44"
+const acidmask       = "[ 0 0 0 0 1 1 1 1 1 1 0 ]/44"
+const midmask        = "[ 0 0 1 1 1 1 1 1 1 1 1 ]/44"
+const submask        = "[ 0 0 1 1 1 1 1 1 1 1 1 ]/44"
 
 // Kick
 $: s("BD:3 * 4").bank('rolandtr909')
   .compressor("-15:40:30:0.002:.5").gain(5)
-  .duck(2).duckattack(0.25).duckdepth(0.4).distort("0:0.5:asym")
+  .duck(2).duckattack(0.25).duckdepth(0.6).distort("0:0.5:asym")
   .delay(0.25)
   .delayspeed(1/8)
   .delayfeedback(0.6)
@@ -36,17 +42,20 @@ $: s(hatpattern).bank('rolandtr909').gain("[0.1 0.4 1 0.4]*4")
 
 // Acidline
 $: n(threeohthree.add(chordprog).sub(7)).scale(setscale).s("sawtooth")
-  .detune(0.6).decay(slider(0.1268,0.1,0.5))
-  .lpf(perlin.range(200,600)).lpq(4).diode("3:0.15")
-  .delay("0.3:0.3:.2").room(0.1).mask("[1 1 1 1 ]/16").orbit(2)
+  .detune(0.6).decay(slider(0.1,0.1,0.5))
+  .lpf(perlin.range(200,lp303melody)).lpq(4).diode("3:0.15")
+  .room(0.1)
+  .mask(acidmask)
+  .orbit(2)
   .postgain(threegain)
+  .delay("< 0 0 0 0 0.3 0 0 0 0 0 0 0 0 0.75 0 0 > * 16").delayfb(0.75)
 
 // Bass
 $: n("[0 0 7 0]*4".add(chordprog).sub(14)).scale(setscale).s("supersaw").detune(0.35).distort("2:0.5:asym")
-  .postgain(midbassgain).orbit(2).gain(sidegain)
+  .postgain(midbassgain).orbit(2).gain(sidegain).mask(midmask)
 
 $: n("[0 0 7 0]*4".add(chordprog).sub(14)).scale(setscale).s("sine").distort("3:0.5:asym")
-  .postgain(midbassgain).orbit(2).gain(sidegain)
+  .postgain(midbassgain).orbit(2).gain(sidegain).mask(submask)
 
 // Weird thing
 $: n("[ 7 _ _ 6] / 2".add(chordprog)).scale(setscale).s("saw").lpf(500).lpdecay(0.5).decay(0.4).lpa(0.07)
